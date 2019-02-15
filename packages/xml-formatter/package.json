@@ -1,0 +1,45 @@
+{
+  "_from": "https://www.atom.io/api/packages/xml-formatter/versions/0.12.0/tarball",
+  "_id": "xml-formatter@0.12.0",
+  "_inBundle": false,
+  "_integrity": "sha512-bIr0r+9cdY3KFtwu92X6geQNiAkER4LnLpjIdSFcbDpLz+3amGhidKAN6mHc1gGTVm3wu8Osfu8hLLPK+Oa7WQ==",
+  "_location": "/xml-formatter",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "remote",
+    "raw": "https://www.atom.io/api/packages/xml-formatter/versions/0.12.0/tarball",
+    "rawSpec": "https://www.atom.io/api/packages/xml-formatter/versions/0.12.0/tarball",
+    "saveSpec": "https://www.atom.io/api/packages/xml-formatter/versions/0.12.0/tarball",
+    "fetchSpec": "https://www.atom.io/api/packages/xml-formatter/versions/0.12.0/tarball"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://www.atom.io/api/packages/xml-formatter/versions/0.12.0/tarball",
+  "_shasum": "4378ad00cef7820f8d0baf8bf06c891930102199",
+  "_spec": "https://www.atom.io/api/packages/xml-formatter/versions/0.12.0/tarball",
+  "_where": "C:\\Users\\엄준태\\AppData\\Local\\Temp\\apm-install-dir-119022-16236-6nehyr.h15c9",
+  "bugs": {
+    "url": "https://github.com/neyestrabelli/xml-formatter/issues"
+  },
+  "bundleDependencies": false,
+  "dependencies": {},
+  "deprecated": false,
+  "description": "XML Formatter",
+  "dist": {
+    "shasum": "b65dc3311cf57655cfd43ec33470f453a7577c8a"
+  },
+  "engines": {
+    "atom": ">=1.0.0 <2.0.0"
+  },
+  "homepage": "https://github.com/neyestrabelli/xml-formatter",
+  "license": "MIT",
+  "main": "./lib/xml-formatter",
+  "name": "xml-formatter",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neyestrabelli/xml-formatter.git"
+  },
+  "version": "0.12.0"
+}

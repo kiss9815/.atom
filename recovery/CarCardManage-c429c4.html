@@ -1,0 +1,646 @@
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=EUC-KR"/>
+    <title>Insert title here</title>
+</head>
+<script language="Javascript" src="/lts/template_interpark/common/etour_script.js"></script>
+<script type="text/javascript" src="/global/js/jquery-1.7.2.min.js" charset="euc-kr"></script>
+<script type="text/javascript" src="/global/js/jqgrid/jquery.jqGrid.min.js" charset="euc-kr"></script>
+<script type="text/javascript" src="/global/js/jqgrid/grid.locale-kr.js" charset="utf-8"></script>
+<script type="text/javascript" src="/global/js/jqgrid/jquery-ui-1.9.0.custom.min.js" charset="utf-8"></script>
+<link href="/global/css/jquerytheme/base/jquery-ui.css" rel="stylesheet">
+<link href='/lts/template_interpark/css/style.css' rel='stylesheet' type='text/css'>
+<link href="/global/js/jqgrid/css/ui.multiselect.css" media="screen" rel="stylesheet">
+<link href="/global/js/jqgrid/css/ui.jqgrid.css" media="screen" rel="stylesheet">
+<link href='/lts/template_interpark/css/style.css' rel='stylesheet' type='text/css'>
+
+
+<style>
+.inputSize {
+  width : 80px
+}
+</style>
+
+<body>
+
+    <table id="jqGrid"></table>
+    <div id="jqGridPager"></div>
+    <br>
+    <br>
+    <table id="jqGridOption"></table>
+    <div id="jqGridOptionPager"></div>
+    <br>
+    <table id="jqGridNonUse"></table>
+    <div id="jqGridNonUsePager"></div>
+
+
+    <div id="popLayer">
+        <div id="addContents" style="width: 915px">
+            <h2>* 한국발|해외발 결제-신규 추가/수정</h2>
+            <table style="margin-top: 10px;">
+                    <tr bgcolor="E7E7E7">
+                        <th>항공사</th>
+                        <th>한국발카드</th>
+                        <th>해외발카드</th>
+                        <th>적용종료일</th>
+                        <th>적용여부</th>
+                        <th>커미션타입</th>
+                        <th>추가</th>
+                    </tr>
+                    <tr>
+                        <td width="10%"><input type="text" id="ADD_AIRLINE_CODE" class="inputSize upperCase" maxlength="2"></td>
+                        <td width="10%"><input type="text" id="ADD_COMM_RATE" class="inputSize numbersOnly" maxlength="2"></td>
+                        <td width="10%"><input type="text" id="ADD_APPLY_START_DATE" class="inputSize numbersOnly" maxlength="8"></td>
+                        <td width="10%"><input type="text" id="ADD_APPLY_END_DATE" class="inputSize numbersOnly" maxlength="8"></td>
+                        <td width="10%">
+                            <p align="center">적용(Y)</p> <input type="hidden" id="ADD_APPLY_YN" class="inputSize text02" maxlength="1" value="Y">
+                        </td>
+                        <td width="10%" align="center">
+                          <select id="ADD_COMM_TYPE" onchange="showOptionTable(this)" >
+          									<option value="D">기본커미션</option>
+          									<option value="A">추가커미션</option>
+					                </select>
+                        </td>
+                        <td width="10%" align="center"><input type="button" id="addUpdateBtn" value="추가하기" onclick="update('I')"></td>
+                    </tr>
+                    <tr bgcolor="E7E7E7" class="optionTable" style="display:none;">
+                      <th >출발시작일</th>
+                      <th >출발종료일</th>
+                      <th >출발지코드</th>
+                      <th >도착지코드</th>
+                      <th >국가코드</th>
+                      <th >제외클래스</th>
+                      <th >제외편명</th>
+                      <th >포함클래스</th>
+                      <th >포함편명</th>
+                    </tr>
+                    <tr class="optionTable" style="display:none;">
+                      <td><input type="text" id="ADD_DEP_START_DATE" class="inputSize numbersOnly" maxlength="8"></td>
+                      <td><input type="text" id="ADD_DEP_END_DATE" class="inputSize numbersOnly"  maxlength="8"></td>
+                      <td><input type="text" id="ADD_DEP_CODE"  class="inputSize upperCase"maxlength="3"></td>
+                      <td><input type="text" id="ADD_ARR_CODE" class="inputSize upperCase" maxlength="3"></td>
+                      <td><input type="text" id="ADD_NATION_CODE"  class="inputSize upperCase" maxlength="2"></td>
+                      <td><input type="text" id="ADD_EXCEPT_CLASS" class="inputSize oneCharComma upperCase" placeholder="K,E,H"></td>
+                      <td><input type="text" id="ADD_EXCEPT_FLIGHT_NO" class="inputSize removeBlank" placeholder="111,121"></td>
+                      <td><input type="text" id="ADD_INCLUDE_CLASS"  class="inputSize oneCharComma upperCase" placeholder="K,E,H"></td>
+                      <td><input type="text" id="ADD_INCLUDE_FLIGHT_NO" class="inputSize removeBlank" placeholder="111,121"></td>
+                    </tr>
+            </table>
+        </div>
+        <div id="correctContents" style="display: none; width: 915px">
+            <h2>* 커미션 수정</h2>
+            <table style="margin-top: 20px;">
+                    <tr bgcolor="E7E7E7">
+                        <th >항공사코드</th>
+                        <th >커미션(%)</th>
+                        <th >적용시작일</th>
+                        <th >적용종료일</th>
+                        <th >적용여부</th>
+                        <th >커미션타입</th>
+                    </tr>
+                    <tr>
+                        <td><input type="text" id="CORRECT_AIRLINE_CODE" class="inputSize upperCase" disabled></td>
+                        <td><input type="text" id="CORRECT_COMM_RATE" class="inputSize numbersOnly" maxlength="2"></td>
+                        <td><input type="text" id="CORRECT_APPLY_START_DATE" class="inputSize numbersOnly" disabled></td>
+                        <td><input type="text" id="CORRECT_APPLY_END_DATE" class="inputSize numbersOnly" maxlength="8"></td>
+                        <td align="center">
+                          <select id="CORRECT_APPLY_YN">
+          									<option value="N">미적용</option>
+          									<option value="Y">적용</option>
+					                </select>
+                        </td>
+                        <td align="center">
+                          <select id="CORRECT_COMM_TYPE">
+          									<option value="D">기본커미션</option>
+          									<option value="A">추가커미션</option>
+					                </select>
+                        </td>
+                    </tr>
+                    <tr bgcolor="E7E7E7">
+                      <th >출발시작일</th>
+                      <th >출발종료일</th>
+                      <th >출발지코드</th>
+                      <th >도착지코드</th>
+                      <th >국가코드</th>
+                      <th >제외클래스</th>
+                      <th >제외편명</th>
+                      <th >포함클래스</th>
+                      <th >포함편명</th>
+                      <th >수정</th>
+                    </tr>
+                    <tr>
+                      <td width="8%"><input type="text" id="CORRECT_DEP_START_DATE" class="inputSize" maxlength="8"></td>
+                      <td width="8%"><input type="text" id="CORRECT_DEP_END_DATE" class="inputSize"  maxlength="8"></td>
+                      <td><input type="text" id="CORRECT_DEP_CODE"  class="inputSize upperCase" maxlength="3"></td>
+                      <td><input type="text" id="CORRECT_ARR_CODE" class="inputSize upperCase" maxlength="3"></td>
+                      <td><input type="text" id="CORRECT_NATION_CODE"  class="inputSize upperCase" maxlength="2"></td>
+                      <td><input type="text" id="CORRECT_EXCEPT_CLASS" class="inputSize upperCase oneCharComma removeBlank"  ></td>
+                      <td><input type="text" id="CORRECT_EXCEPT_FLIGHT_NO" class="inputSize removeBlank" placeholder="111,121"></td>
+                      <td><input type="text" id="CORRECT_INCLUDE_CLASS"  class="inputSize upperCase oneCharComma removeBlank" ></td>
+                      <td><input type="text" id="CORRECT_INCLUDE_FLIGHT_NO" class="inputSize removeBlank" placeholder="111,121"></td>
+                      <td align="center"><input type="button" id="addUpdateBtn" value="수정하기" onclick="update('E')"></td>
+                    </tr>
+            </table>
+        </div>
+    </div>
+    <form id="searchForm" name="searchForm">
+        <input type="hidden" id="SEARCH_TYPE" name="SEARCH_TYPE" value="I">
+        <input type="hidden" id="AIRLINE_CODE"  name="AIRLINE_CODE">
+        <input type="hidden" id="COMM_RATE"  name="COMM_RATE">
+        <input type="hidden" id="APPLY_START_DATE"  name="APPLY_START_DATE">
+        <input type="hidden" id="APPLY_END_DATE" name="APPLY_END_DATE" >
+        <input type="hidden" id="APPLY_YN" name="APPLY_YN">
+        <input type="hidden" id="COMM_TYPE"  name="COMM_TYPE">
+        <input type="hidden" id="DEP_START_DATE"  name="DEP_START_DATE">
+        <input type="hidden" id="DEP_END_DATE"   name="DEP_END_DATE">
+        <input type="hidden" id="DEP_CODE"   name="DEP_CODE">
+        <input type="hidden" id="ARR_CODE"  name="ARR_CODE">
+        <input type="hidden" id="NATION_CODE"  name="NATION_CODE">
+        <input type="hidden" id="EXCEPT_FLIGHT_NO" name="EXCEPT_FLIGHT_NO">
+        <input type="hidden" id="EXCEPT_CLASS" name="EXCEPT_CLASS">
+        <input type="hidden" id="INCLUDE_CLASS"  name="INCLUDE_CLASS">
+        <input type="hidden" id="INCLUDE_FLIGHT_NO" name="INCLUDE_FLIGHT_NO">
+
+    </form>
+
+
+</body>
+
+<script language="javascript">
+
+jQuery(document).ready(function() {
+    doQuery(); // 로드되면 바로 리스트 나오도록
+
+});
+
+function replaceAll(str, searchStr, replaceStr) {
+  return str.split(searchStr).join(replaceStr);
+}
+
+function zerofill(i) {
+    return (i < 10 ? '0' : '') + i;
+}
+
+jQuery('.numbersOnly').keyup(function() {
+    this.value = this.value.replace(/[^0-9\.]/g, '');
+});
+
+jQuery('.upperCase').keyup(function() {
+    this.value = this.value.toUpperCase()
+});
+
+jQuery('.oneCharComma').keyup(function() {
+
+    var str = this.value;
+    if(str.length > 1){
+      str = replaceAll(str,',', '')
+      str =str.split('').toString();
+
+    }
+    this.value = str;
+
+});
+
+jQuery('.removeBlank').keyup(function() {
+    this.value = this.value.trim();
+});
+
+var _localData = {
+    showCommDisplay: false
+};
+
+
+var jqGridSetting = {
+  /* 결제관리 기본모델 */
+  commonModel : [
+    {
+      label: '항공사',  name: 'CCM_CAR',  key: true,   width: 10
+    }, {
+        label: '한국발카드',  name: 'CCM_DEP_KOR',  width: 5, align :'center', sorttype:'number'
+    }, {
+        label: '해외발카드',  name: 'CCM_DEP_ABROAD',  width: 5, align :'center', sorttype:'number'
+    }, {
+        label: '코드쉐어',  name: 'CCM_CODE_SHARE',  width: 5, align :'center', sorttype:'number'
+    }, {
+        label: 'OAL',  name: 'CCM_OAL',  width: 5, align :'center', hidden:true
+    }, {
+        label: '출발제외지역',  name: 'CCM_DEP_EXCEPT_OP_CLASS', width: 10, align :'center', hidden:true
+    }, {
+        label: '출발제외국가',  name: 'CCM_DEP_EXCEPT_NT',  width: 10, align :'center', hidden:true
+    }, {
+        label: '제외코드',  name: 'CCM_EXCEPT_IDT_CODE',  width: 10, align :'center', hidden:true
+    }, {
+      label: '적용여부',  name: 'CCM_APPLY_YN',  width: 5, align :'center'
+    }, {
+        label: '등록일',  name: 'CCM_INPT_DATE',  width: 10, align :'center', hidden:true
+    }
+
+  ],
+  lastModel : [
+   {
+         label: '삭제', name: 'DELETE_COM', sortable: false, align :'center', width: 5,
+         formatter: function (rowId, cellval, colpos, rwdat, _act) {
+          return  "<input type='button' id='"+ cellval.rowId +"deleteBtn"+"' value='삭제' class='btn' data-keyid= '"+ cellval.rowId +"' onClick='deleteCommData(this);' />";
+         }
+    }
+  ],
+  gridResetSelection : function(){
+    jQuery("#jqGrid").jqGrid("resetSelection");
+    jQuery("#jqGridNonUse").jqGrid("resetSelection");
+    jQuery("#jqGridOption").jqGrid("resetSelection");
+  },
+  selectCurrentRow : function(){
+    var keyCheckArr = []; /** Array 에 데이터 없으면 concat 이 안되서 추가 */
+    var keyCheckArrOne = jQuery("#jqGrid").jqGrid('getGridParam', 'selarrrow');
+    var keyCheckArrTwo = jQuery("#jqGridOption").jqGrid('getGridParam', 'selarrrow');
+    var keyCheckArrThree = jQuery("#jqGridNonUse").jqGrid('getGridParam', 'selarrrow');
+
+    keyCheckArr = keyCheckArr.concat(keyCheckArrOne);
+    keyCheckArr = keyCheckArr.concat(keyCheckArrTwo);
+    keyCheckArr = keyCheckArr.concat(keyCheckArrThree);
+    return keyCheckArr;
+  }
+}
+
+
+function doQuery() {
+
+    var captionTitle = "항공사별 결제폼 관리(카드 결제 가능 조건)";
+    //var colModel = jqGridSetting.commonModel.concat(jqGridSetting.lastModel);
+    var colModel = jqGridSetting.commonModel;
+    jQuery("#jqGrid").jqGrid('GridUnload');
+
+    jQuery("#jqGrid").jqGrid({
+        url: "/lts/admin/CarCardManage.lts",
+        postData: {
+            SEARCH_TYPE: 'R'
+        },
+        datatype: "json",
+        jsonReader: {
+            repeatitems: false,
+            root: "result",
+            page: "page",
+            records: "records"
+        },
+        colModel: colModel,
+        width: 1050,
+        onSelectRow: function(rowid, status, iCol) {
+
+            /** 하나만 체크박스 눌리도록 */
+            if (rowid == _localData.lastSel) {
+                //jQuery(this).jqGrid("resetSelection");
+                jqGridSetting.gridResetSelection();
+                _localData.lastSel = undefined;
+                status = false;
+            } else {
+                _localData.lastSel = rowid;
+            }
+            /** 하나만 체크박스 눌리도록 */
+            if (status) {
+                var rowData = jQuery("#jqGrid").getRowData(rowid)
+                setCorrectData(rowData);
+                jQuery('#correctContents').show();
+            } else {
+                jQuery('#correctContents').hide();
+            }
+
+        },
+        /*
+        ondblClickRow: function (rowid, iRow, iCol) {
+            var editableCells = ['COMM_RATE'];
+            var colModels = $(this).getGridParam('colModel');
+            var colName = colModels[iCol].name;
+            if (editableCells.indexOf(colName) >= 0) {
+                $(this).setColProp(colName, { editable: true });
+                $(this).editCell(iRow, iCol, true);
+            }
+        },
+        //에디트가 종료되면, 셀의 에디트 가능 여부를 false 로 돌린다.
+        afterEditCell: function (rowid, cellname, value, iRow, iCol) {
+            $(this).setColProp(cellname, { editable: false });
+        },
+        */
+        loadComplete: function(data) {
+
+            if(data.result){
+              _localData.optionDatas = new Array();
+              _localData.nonUseDatas = new Array();
+              for(var i=0; i<data.result.length; i++){
+                if(data.result[i].COMM_TYPE == "A"){
+                  _localData.optionDatas.push(data.result[i]);
+                  $('#jqGrid').jqGrid('delRowData',data.result[i].PRIMARY_KEY);
+                }
+                if(data.result[i].APPLY_YN == 'N'){
+                  _localData.nonUseDatas.push(data.result[i]);
+                  $('#jqGrid').jqGrid('delRowData',data.result[i].PRIMARY_KEY);
+                }
+              }
+
+              _localData.totalDatas = data.result;
+              jqGridLocal('Option');
+              jqGridLocal('NonUse');
+            }else{ /** 정렬이나 그리드 새로고침 처럼 data 다 가져온뒤의 loadt complete */
+              for(var i=0; i<data.rows.length; i++){
+                if(data.rows[i].COMM_TYPE == "A"){
+                  $('#jqGrid').jqGrid('delRowData',data.rows[i].PRIMARY_KEY);
+                }
+                if(data.rows[i].APPLY_YN == 'N'){
+                  $('#jqGrid').jqGrid('delRowData',data.rows[i].PRIMARY_KEY);
+                }
+              }
+            }
+
+
+        },
+        beforeSelectRow: function(rowId, e) {
+            jQuery(this).jqGrid("resetSelection");
+            jqGridSetting.gridResetSelection();
+            return true;
+        },
+        cache: false,
+        loadonce: true,
+        rowNum: 20,
+        width: 900,
+        rowList: [10, 20, 30, 40, 50],
+        pager: '#jqGridPager',
+        hiddengrid: false,
+        rownumbers: true,
+        viewrecords: true,
+        sortorder: "desc",
+        height: "auto",
+        //cellEdit:true,
+        multiselect: true,
+        multiboxonly: true,
+        formatter: {
+            integer: {
+                thousandsSeparator: ",",
+                defaultValue: 0
+            }
+        },
+        caption: captionTitle
+    }).navGrid('#jqGridPager', {
+        edit: false, add: false, del: false
+    });
+
+    jQuery('#jqGrid').jqGrid('filterToolbar', {
+        stringResult: true, searchOnEnter: false, searchOperators: true
+    });
+
+}
+
+function jqGridLocal(gridName) {
+
+    var colModel = jqGridSetting.commonModel.concat(jqGridSetting.oModel).concat(jqGridSetting.lastModel);
+
+    var gridId = "#jqGrid"+gridName;
+    var gridPager = "#jqGrid"+gridName+"Pager"
+    var localData;
+    var hidenGrid;
+    var captionTitle;
+    if(gridName == 'Option'){
+      localData = _localData.optionDatas
+      hidenGrid = false;
+      captionTitle = "커미션 추가 조건 관리";
+    }else{
+      localData = _localData.nonUseDatas
+      hidenGrid = true;
+      captionTitle = "커미션 미사용 리스트";
+    }
+
+    jQuery(gridId).jqGrid('GridUnload');
+
+    jQuery(gridId).jqGrid({
+        datatype: 'local',
+        data:localData,
+        localReader: {
+            repeatitems: false
+        },
+        colModel: colModel,
+        width: 1050,
+        onSelectRow: function(rowid, status, iCol) {
+            /** 하나만 체크박스 눌리도록 */
+            if (rowid == _localData.lastSel) {
+                jqGridSetting.gridResetSelection();
+                _localData.lastSel = undefined;
+                status = false;
+            } else {
+                _localData.lastSel = rowid;
+            }
+            /** 하나만 체크박스 눌리도록 */
+            if (status) {
+                var rowData = jQuery(gridId).getRowData(rowid)
+
+                setCorrectData(rowData);
+
+
+                jQuery('#correctContents').show();
+            } else {
+                jQuery('#correctContents').hide();
+            }
+
+        },
+        loadComplete: function(data) {
+
+        },
+        beforeSelectRow: function(rowId, e) {
+            //jQuery(this).jqGrid("resetSelection");
+            jqGridSetting.gridResetSelection();
+            return true;
+        },
+        cache: false,
+        loadonce: true,
+        rowNum: 20,
+        width: 900,
+        rowList: [10, 20, 30, 40, 50],
+        pager: gridPager,
+        hiddengrid: hidenGrid,
+        rownumbers: true,
+        viewrecords: true,
+        sortorder: "desc",
+        height: "auto",
+        //cellEdit:true,
+        multiselect: true,
+        multiboxonly: true,
+        formatter: {
+            integer: {
+                thousandsSeparator: ",",
+                defaultValue: 0
+            }
+        },
+        caption: captionTitle
+    }).navGrid(gridPager, {
+        edit: false, add: false, del: false
+    });
+
+    jQuery(gridId).jqGrid('filterToolbar', {
+        stringResult: true, searchOnEnter: false, searchOperators: true
+    });
+
+}
+
+function setCorrectData(rowData){
+
+  jQuery('#CORRECT_AIRLINE_CODE').val(rowData.AIRLINE_CODE);
+  jQuery('#CORRECT_COMM_RATE').val(rowData.COMM_RATE);
+  jQuery('#CORRECT_APPLY_START_DATE').val(rowData.APPLY_START_DATE);
+  jQuery('#CORRECT_APPLY_END_DATE').val(rowData.APPLY_END_DATE);
+  jQuery('#CORRECT_APPLY_YN').val(rowData.APPLY_YN);
+  jQuery('#CORRECT_COMM_TYPE').val(rowData.COMM_TYPE);
+  jQuery('#CORRECT_DEP_START_DATE').val(rowData.DEP_START_DATE);
+  jQuery('#CORRECT_DEP_END_DATE').val(rowData.DEP_END_DATE);
+  jQuery('#CORRECT_DEP_CODE').val(rowData.DEP_CODE);
+  jQuery('#CORRECT_ARR_CODE').val(rowData.ARR_CODE);
+  jQuery('#CORRECT_NATION_CODE').val(rowData.NATION_CODE);
+  jQuery('#CORRECT_EXCEPT_CLASS').val(rowData.EXCEPT_CLASS);
+  jQuery('#CORRECT_EXCEPT_FLIGHT_NO').val(rowData.EXCEPT_FLIGHT_NO);
+  jQuery('#CORRECT_INCLUDE_CLASS').val(rowData.INCLUDE_CLASS);
+  jQuery('#CORRECT_INCLUDE_FLIGHT_NO').val(rowData.INCLUDE_FLIGHT_NO);
+
+}
+
+function showOptionTable(element){
+  if(element.value == 'D'){
+    jQuery(".optionTable").hide();
+  }else{
+    jQuery(".optionTable").show();
+  }
+}
+
+function setFormData(sufixId){
+  jQuery('#AIRLINE_CODE').val(jQuery(sufixId+'AIRLINE_CODE').val().toUpperCase());
+  jQuery('#COMM_RATE').val(jQuery(sufixId+'COMM_RATE').val());
+  jQuery('#APPLY_START_DATE').val(jQuery(sufixId+'APPLY_START_DATE').val());
+  jQuery('#APPLY_END_DATE').val(jQuery(sufixId+'APPLY_END_DATE').val());
+  jQuery('#APPLY_YN').val(jQuery(sufixId+'APPLY_YN').val());
+  jQuery('#COMM_TYPE').val(jQuery(sufixId+'COMM_TYPE').val());
+  jQuery('#DEP_START_DATE').val(jQuery(sufixId+'DEP_START_DATE').val());
+  jQuery('#DEP_END_DATE').val(jQuery(sufixId+'DEP_END_DATE').val());
+  jQuery('#DEP_CODE').val(jQuery(sufixId+'DEP_CODE').val());
+  jQuery('#ARR_CODE').val(jQuery(sufixId+'ARR_CODE').val());
+  jQuery('#NATION_CODE').val(jQuery(sufixId+'NATION_CODE').val());
+  jQuery('#EXCEPT_CLASS').val(jQuery(sufixId+'EXCEPT_CLASS').val());
+  jQuery('#EXCEPT_FLIGHT_NO').val(jQuery(sufixId+'EXCEPT_FLIGHT_NO').val());
+  jQuery('#INCLUDE_CLASS').val(jQuery(sufixId+'INCLUDE_CLASS').val());
+  jQuery('#INCLUDE_FLIGHT_NO').val(jQuery(sufixId+'INCLUDE_FLIGHT_NO').val());
+
+}
+
+function update(SEARCH_TYPE) {
+    jQuery('#SEARCH_TYPE').val(SEARCH_TYPE);
+
+    if (SEARCH_TYPE == 'E') {
+        setFormData('#CORRECT_');
+    } else {
+        setFormData('#ADD_');
+    }
+
+    if (jQuery('#AIRLINE_CODE').val() == '' ) {
+        alert("항공사를 입력해주세요");
+        return;
+    }
+
+    if (jQuery('#COMM_RATE').val() == '') {
+        alert("커미션을 입력해주세요");
+        return;
+    }
+    if (jQuery('#APPLY_START_DATE').val() == '') {
+        alert("적용시작일자를 입력해주세요");
+        return;
+    }
+
+    if (jQuery('#APPLY_END_DATE').val() == '') {
+        alert("적용종료일자를 입력해주세요");
+        return;
+    }
+
+    if (parseInt(jQuery('#APPLY_START_DATE').val()) > parseInt(jQuery('#APPLY_END_DATE').val())) {
+        alert("시작일자가 종료일자보다 큽니다.");
+        return;
+    }
+
+    var form = jQuery("#searchForm").serialize();
+
+    jQuery.ajax({ //Jquery  Ajax
+        type: "post",
+        url: "/lts/adminB/AmadeusCommList.lts",
+        data: form,
+        cache: false,
+        dataType: 'json',
+        success: function(data) {
+            var code = data.code;
+            if (code == 1) {
+                doQuery();
+                alert("데이터를 업데이트 했습니다.");
+            } else if (code == 0) {
+                alert("변경된 데이터가 없습니다.");
+            } else if (code == -3) {
+                alert("같은 항공사에 적용시작일자와 적용종료일자가 중복된 데이터가 있습니다.");
+            } else {
+                alert(data.message);
+            }
+
+        },
+        error: function(data) {
+            alert("네트워크 에러 및 예측하지 못한 에러");
+        }
+    });
+}
+
+function deleteCommData(cellValue) {
+
+   var keyCheck =   jqGridSetting.selectCurrentRow();
+    if(keyCheck.length < 1 ){
+      alert("체크박스 선택후 삭제 바랍니다.")
+      return;
+    }
+
+    var key = cellValue.dataset.keyid;
+
+    if(keyCheck[0] !== key ){
+      alert("체크한 행의 삭제버튼이 아닙니다. 다시 삭제버튼 눌러주십시오.")
+      return;
+    }
+
+
+    var con = confirm("선택한 " + key + " 커미션 정보를 삭제하시겠습니까?")
+    if (con) {
+
+    } else {
+        return;
+    }
+
+    jQuery.ajax({ //Jquery  Ajax
+        type: "post",
+        url: "/lts/adminB/AmadeusCommList.lts",
+        data: {
+            'SEARCH_TYPE': 'D',
+            'PRIMARY_KEY': key
+        },
+        cache: false,
+        dataType: 'json',
+        success: function(data) {
+            var code = data.code;
+            if (code == 1) {
+                doQuery();
+                alert("데이터를 삭제 했습니다.");
+            } else {
+                alert(data.message);
+            }
+        },
+        error: function(data) {
+            alert("네트워크 에러 및 예측하지 못한 에러");
+        }
+    });
+}
+
+  jQuery(window).bind('resize', function(){
+ 	    jQuery("#jqGrid").setGridWidth(jQuery(window).width()-40);
+      jQuery("#jqGridNonUse").setGridWidth(jQuery(window).width()-40);
+      jQuery("#jqGridOption").setGridWidth(jQuery(window).width()-40);
+
+ 	}).trigger('resize');
+
+
+</script>
+
+</html>
