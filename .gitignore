@@ -9,3 +9,6 @@ config.cson
 init.coffee
 .apmrc
 github.cson
+recovery
+snippets.cson
+styles.less
